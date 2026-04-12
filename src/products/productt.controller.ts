@@ -15,12 +15,9 @@ import { ProductService } from "./product.service";
 
 @Controller('api/products')
 export class ProductController{
-    //@Imp note: Will use Dependency Injection later
-    private productService: ProductService;
 
-    constructor(productService: ProductService){
-        this.productService = productService;
-    }
+    constructor(private productService: ProductService){}
+    
     // POST: ~/api/products
     @Post()
     public CreateNewProduct(@Body() body:createProductDto){
