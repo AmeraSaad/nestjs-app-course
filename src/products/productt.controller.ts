@@ -16,8 +16,8 @@ import { ProductService } from "./product.service";
 @Controller('api/products')
 export class ProductController{
 
-    constructor(private productService: ProductService){}
-    
+    constructor(private readonly productService: ProductService){}
+
     // POST: ~/api/products
     @Post()
     public CreateNewProduct(@Body() body:createProductDto){
