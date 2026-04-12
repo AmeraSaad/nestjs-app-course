@@ -1,0 +1,13 @@
+Get http://localhost:5000/api/products
+
+### Get a single product by id
+Get http://localhost:5000/api/products/1
+
+### Create a new product
+POST http://localhost:5000/api/products
+Content-Type: application/json
+
+{
+  "name": "Product 4",
+  "price": 400
+}
