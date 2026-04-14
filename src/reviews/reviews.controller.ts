@@ -5,7 +5,7 @@ import { UserService } from "src/users/users.service";
 @Controller('/api/reviews')
 export class ReviewsController {
 
-    constructor(private readonly reviewsService: ReviewsService, private readonly userService: UserService) {}
+    constructor(private readonly reviewsService: ReviewsService) {}
 
     @Get()
     public getAllReviews() {

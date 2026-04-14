@@ -1,7 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import { UserService } from "src/users/users.service";
 
 @Injectable()
 export class ReviewsService{
+
+    constructor(
+        @Inject(forwardRef(() => UserService))
+        private readonly userService: UserService) {}
     
     public getAll() {
         return [
