@@ -12,8 +12,6 @@ type ProductType = {
 @Injectable()
 export class ProductService {
 
-    constructor(private readonly userService:UserService){}
-
     private products: ProductType[] = [   
         { id: 1,title: 'Product 1',price: 100},
         {id: 2,title: 'Product 2',price: 200},
@@ -37,9 +35,7 @@ export class ProductService {
      * Get all products
      */
     public getAll(){
-        const products= this.products;
-        const users = this.userService.getAll();
-        return {products, users};
+        return this.products;
     }
 
     /**

@@ -7,11 +7,15 @@ export class UpdateProductDto {
     // @MaxLength(150)
     @Length(3, 150)
     @IsOptional()
-    title: string
+    title?: string
+
+    @IsString()
+    @IsOptional()
+    description?: string
 
     @IsNumber()
     @IsNotEmpty()
     @Min(0)
     @IsOptional()
-    price: number
+    price?: number
 }

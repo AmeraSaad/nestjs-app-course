@@ -1,7 +1,7 @@
 import { Module, forwardRef } from "@nestjs/common";
 import { ReviewsController } from "./reviews.controller";
 import { ReviewsService } from "./reviewes.service";
-import { UserModule } from "src/users/user.module";
+import { UserModule } from "src/users/users.module";
 
 @Module({
     controllers: [ReviewsController],
