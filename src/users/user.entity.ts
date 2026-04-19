@@ -34,7 +34,7 @@ export class User {
 
     @OneToMany(() => Product, product => product.user)
     product:Product[];
-
+    
     @OneToMany(() => Review, review => review.user)
     reviews: Review[];
 }
