@@ -4,9 +4,7 @@ import { UserService } from "src/users/users.service";
 @Injectable()
 export class ReviewsService{
 
-    constructor(
-        @Inject(forwardRef(() => UserService))
-        private readonly userService: UserService) {}
+    constructor() {}
     
     public getAll() {
         return [

@@ -10,6 +10,6 @@ import { Product } from "src/products/product.entity";
     controllers: [ReviewsController],
     providers: [ReviewsService],
     exports: [ReviewsService],
-    imports: [forwardRef(() => UserModule), TypeOrmModule.forFeature([Review])]
+    imports: [TypeOrmModule.forFeature([Review])]
 })
 export class ReviewsModule {}
