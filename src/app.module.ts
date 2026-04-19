@@ -5,6 +5,7 @@ import { UserModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Product } from './products/product.entity';
+import { Review } from './reviews/review.entity';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { Product } from './products/product.entity';
           username: config.get<string>('DB_USERNAME'),
           password: config.get<string>('DB_PASSWORD'),
           database: config.get<string>('DB_DATABASE'),
-          entities: [Product],
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
           synchronize: process.env.NODE_ENV !== 'production',
         }),
       }),
