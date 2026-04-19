@@ -11,6 +11,7 @@ export class UpdateProductDto {
 
     @IsString()
     @IsOptional()
+    @MinLength(3)
     description?: string
 
     @IsNumber()

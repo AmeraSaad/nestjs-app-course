@@ -9,6 +9,7 @@ export class createProductDto {
     title: string
 
     @IsString()
+    @MinLength(3)
     description: string
 
     @IsNumber()
