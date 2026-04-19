@@ -9,6 +9,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
     controllers: [UsersController],
     providers:[UserService],
     exports:[UserService],
-    imports: [ forwardRef(() => ReviewsModule), TypeOrmModule.forFeature([User]) ]
+    imports: [TypeOrmModule.forFeature([User])]
 })
 export class UserModule {}
