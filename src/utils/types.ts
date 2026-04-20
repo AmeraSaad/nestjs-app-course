@@ -4,10 +4,5 @@ export type JWTPayloadType = {
 }
 
 export type AccessTokenType = {
-    accessToken: string,
-    user: {
-        id: number,
-        email: string,
-        username: string,
-    }
+    accessToken: string
 }
