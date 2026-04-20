@@ -3,7 +3,9 @@ import { UserService } from "./users.service";
 import { RegisterDto } from "./dtos/register.dto";
 import { LoginDto } from "./dtos/login.dto";
 import { AuthGuard } from "./guards/auth.guard";
-import { CURRENT_USER_KEY } from "src/utils/constants";
+import { currentUserDecorator } from "./decorators/current-user.decorator";
+import type { JWTPayloadType } from "src/utils/types";
+
 
 @Controller('/api/users')
 export class UsersController {
@@ -26,8 +28,8 @@ export class UsersController {
     // GET ~/api/users/current-user
     @Get('current-user')
     @UseGuards(AuthGuard)
-    public getCurrentUser(@Req() request: any){
-        const payload = request[CURRENT_USER_KEY];
+    public getCurrentUser(@currentUserDecorator() payload:JWTPayloadType){
+    
         return this.userService.getCurrentUser(payload.id);
      
     }
