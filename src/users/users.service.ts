@@ -4,13 +4,18 @@ import { Repository } from "typeorm";
 import { User } from "./user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from 'bcryptjs';
+import { LoginDto } from "./dtos/login.dto";
+import { JwtService } from "@nestjs/jwt";
+import { AccessTokenType, JWTPayloadType } from "src/utils/types";
+import { promises } from "dns";
 
 @Injectable()
 export class UserService{
 
     constructor(
         @InjectRepository(User)
-        private readonly userRepository: Repository<User>
+        private readonly userRepository: Repository<User>,
+        private readonly jwtService: JwtService
     ){}
 
     /**
@@ -18,7 +23,7 @@ export class UserService{
      * @param registerDto data for creating new user
      * @returns JWT (access token)
      */
-    public async register(registerDto: RegisterDto){
+    public async register(registerDto: RegisterDto): Promise<AccessTokenType> {
         const {email, username, password} = registerDto;
 
         const userFromdb = await this.userRepository.findOne({ where: { email } });
@@ -36,9 +41,50 @@ export class UserService{
 
         await this.userRepository.save(user);
 
-        // @TODO -> generate JWT token
-        return user;
+        const accessToken = await this.generateJWT(user);
+        
+        return {
+        accessToken,
+            user: {
+                id: user.id,
+                email: user.email,
+                username: user.username,
+            },
+        };
     }
 
 
+    /**
+     * Login user
+     * @param loginDto data for logging in
+     * @returns JWT (access token)
+     */
+    public async login(loginDto: LoginDto): Promise<AccessTokenType> {
+        const {email, password} = loginDto;
+
+        const user = await this.userRepository.findOne({ where: { email } });
+
+        if (!user) throw new BadRequestException('Invalid email or password');
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordValid) throw new BadRequestException('Invalid email or password');
+
+        const accessToken = await this.generateJWT(user);
+        
+        return {
+            accessToken,
+            user:{ 
+                id: user.id,
+                email: user.email,
+                username: user.username,
+            }};
+    }
+
+
+    private async generateJWT(user: User): Promise<string>{
+        const payload:JWTPayloadType = { id: user.id, UserType: user.userType};
+        return this.jwtService.signAsync(payload);
+    }
+    
 }
