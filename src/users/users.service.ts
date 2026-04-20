@@ -54,7 +54,7 @@ export class UserService{
      * @returns user
      */
     public async getCurrentUser(beararToken:string) {
-        const [type, token] = beararToken.split(" ");
+        const [_, token] = beararToken.split(" ");
         
         const payload= await this.jwtService.verifyAsync(token,{
             secret: this.config.get<string>('JWT_SECRET'),
