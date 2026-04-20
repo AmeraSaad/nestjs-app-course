@@ -17,7 +17,6 @@ export class UserService{
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
         private readonly jwtService: JwtService,
-        private readonly config: ConfigService,
     ){}
 
     /**
@@ -53,14 +52,9 @@ export class UserService{
      * @param id user id
      * @returns user
      */
-    public async getCurrentUser(beararToken:string) {
-        const [_, token] = beararToken.split(" ");
-        
-        const payload= await this.jwtService.verifyAsync(token,{
-            secret: this.config.get<string>('JWT_SECRET'),
-        });
+    public async getCurrentUser(id: number) {
 
-        const user = await this.userRepository.findOne({ where: { id: payload.id } });
+        const user = await this.userRepository.findOne({ where: { id } });
         if (!user) throw new BadRequestException('User not found');
         return user;
     }
