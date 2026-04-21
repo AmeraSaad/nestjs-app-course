@@ -21,7 +21,7 @@ export class User {
     password: string;
 
     @Column({type: 'enum', enum: UserTypeEnum, default: UserTypeEnum.USER})
-    userType: string;
+    userType: UserTypeEnum;
 
     @Column({default: false})
     isAccountVerified: boolean;

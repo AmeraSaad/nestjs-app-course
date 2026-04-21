@@ -1,0 +1,55 @@
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
+import { Request } from 'express';
+import { CURRENT_USER_KEY } from "src/utils/constants";
+import { Reflector } from "@nestjs/core";
+import { UserTypeEnum } from "src/utils/enums";
+import { UsersService } from "../users.service";
+
+@Injectable()
+export class AuthRolesGuard implements CanActivate{
+    constructor(
+        private readonly jwtService: JwtService,
+        private readonly config:ConfigService,
+        private readonly reflector: Reflector,
+        private readonly usersService: UsersService
+    ) {}
+
+    async canActivate(context: ExecutionContext){
+        const roles:UserTypeEnum[] = this.reflector.getAllAndOverride('roles', [
+            context.getHandler(),
+            context.getClass(),
+        ]);
+
+        if(!roles || roles.length === 0) return false;
+        
+        const request :Request = context.switchToHttp().getRequest();
+        const [type, token] = request.headers.authorization?.split(" ") ?? [];
+
+        if(token && type === "Bearer"){
+            try{
+                const payload = await this.jwtService.verifyAsync(token,{
+                secret: this.config.get<string>("JWT_SECRET")
+            })
+
+            const user = await this.usersService.getCurrentUser(payload.id);
+            if(!user) return false;
+
+            if(roles.includes(user.userType)) {
+                request[CURRENT_USER_KEY] = payload;
+                return true;
+            }
+
+            }catch {
+                throw new UnauthorizedException("Access denied, Invalid token");
+            }
+
+        }else {
+            throw new UnauthorizedException("Access denied, Missing or invalid authorization header");
+        }
+
+        return false;
+    }
+    
+}

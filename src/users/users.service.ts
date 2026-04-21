@@ -11,7 +11,7 @@ import { promises } from "dns";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()
-export class UserService{
+export class UsersService{
 
     constructor(
         @InjectRepository(User)
@@ -48,18 +48,6 @@ export class UserService{
     }
 
     /**
-     * Get user by id
-     * @param id user id
-     * @returns user
-     */
-    public async getCurrentUser(id: number) {
-
-        const user = await this.userRepository.findOne({ where: { id } });
-        if (!user) throw new BadRequestException('User not found');
-        return user;
-    }
-
-    /**
      * Login user
      * @param loginDto data for logging in
      * @returns JWT (access token)
@@ -80,6 +68,25 @@ export class UserService{
         return { accessToken };
     }
 
+    /**
+     * Get user by id
+     * @param id user id
+     * @returns user
+     */
+    public async getCurrentUser(id: number): Promise<User> {
+
+        const user = await this.userRepository.findOne({ where: { id } });
+        if (!user) throw new BadRequestException('User not found');
+        return user;
+    }
+
+    /**
+     * Get all users
+     * @returns all users
+     */
+    public getAll(): Promise<User[]>{
+        return this.userRepository.find();
+    }
 
     private async generateJWT(user: User): Promise<string>{
         const payload:JWTPayloadType = { id: user.id, UserType: user.userType};

@@ -1,6 +1,6 @@
 import { Module} from "@nestjs/common";
 import { UsersController } from "./users.controller";
-import { UserService } from "./users.service";
+import { UsersService } from "./users.service";
 import { User } from "./user.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { JwtModule } from "@nestjs/jwt";
@@ -9,7 +9,7 @@ import { StringValue } from "ms";
 
 @Module({
     controllers: [UsersController],
-    providers:[UserService],
+    providers:[UsersService],
     imports: [
         TypeOrmModule.forFeature([User]),
         JwtModule.registerAsync({
