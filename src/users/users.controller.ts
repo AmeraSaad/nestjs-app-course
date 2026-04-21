@@ -14,26 +14,28 @@ import { UpdateUserDto } from "./dtos/update-user.dto";
 @Controller('/api/users')
 export class UsersController {
 
-    constructor(private readonly UsersService: UsersService) {}
+    constructor(
+        private readonly usersService: UsersService,
+    ) {}
 
     // POST ~/api/users/auth/register
     @Post('auth/register')
     public register(@Body() body: RegisterDto){
-        return this.UsersService.register(body);
+        return this.usersService.register(body);
     }
 
     // Post ~/api/users/auth/login
     @Post('auth/login') //201
     @HttpCode(HttpStatus.OK) //200
     public login(@Body() body: LoginDto){
-        return this.UsersService.login(body);
+        return this.usersService.login(body);
     }
     
     // GET ~/api/users/current-user
     @Get('current-user')
     @UseGuards(AuthGuard)
     public getCurrentUser(@currentUserDecorator() payload:JWTPayloadType){
-        return this.UsersService.getCurrentUser(payload.id);
+        return this.usersService.getCurrentUser(payload.id);
     }
 
     // GET ~/api/users/all
@@ -41,7 +43,7 @@ export class UsersController {
     @Role(UserTypeEnum.ADMIN)
     @UseGuards(AuthRolesGuard)
     public getAll(){
-        return this.UsersService.getAll();
+        return this.usersService.getAll();
     }
 
     // Put ~/api/users
@@ -49,7 +51,7 @@ export class UsersController {
     @Role(UserTypeEnum.USER, UserTypeEnum.ADMIN)
     @UseGuards(AuthRolesGuard)
     public updateUser(@currentUserDecorator() payload:JWTPayloadType, @Body() body: UpdateUserDto){
-        return this.UsersService.update(payload.id, body);
+        return this.usersService.update(payload.id, body);
     }
 
     // Delete ~/api/users
@@ -57,7 +59,7 @@ export class UsersController {
     @Role(UserTypeEnum.USER, UserTypeEnum.ADMIN)
     @UseGuards(AuthRolesGuard)
     public deleteUser(@Param("id", ParseIntPipe) id:number, @currentUserDecorator() payload:JWTPayloadType){
-        return this.UsersService.delete(id,payload);
+        return this.usersService.delete(id,payload);
     }
 
 }

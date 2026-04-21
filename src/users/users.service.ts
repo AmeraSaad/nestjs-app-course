@@ -11,6 +11,7 @@ import { promises } from "dns";
 import { ConfigService } from "@nestjs/config";
 import { UpdateUserDto } from "./dtos/update-user.dto";
 import { UserTypeEnum } from "src/utils/enums";
+import { AuthService } from "./auth.service";
 
 @Injectable()
 export class UsersService{
@@ -18,34 +19,16 @@ export class UsersService{
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-        private readonly jwtService: JwtService,
+        private readonly authService: AuthService
     ){}
 
-    /**
+      /**
      * Create new user
      * @param registerDto data for creating new user
      * @returns JWT (access token)
      */
     public async register(registerDto: RegisterDto): Promise<AccessTokenType> {
-        const {email, username, password} = registerDto;
-
-        const userFromdb = await this.userRepository.findOne({ where: { email } });
-
-        if (userFromdb) throw new BadRequestException('User already exists');
-
-        const hashedPassword = await this.hashPassword(password);
-
-        let user = this.userRepository.create({
-            email,
-            username,
-            password: hashedPassword
-        })
-
-        await this.userRepository.save(user);
-
-        const accessToken = await this.generateJWT(user);
-        
-        return { accessToken };
+        return this.authService.register(registerDto);
     }
 
     /**
@@ -54,19 +37,7 @@ export class UsersService{
      * @returns JWT (access token)
      */
     public async login(loginDto: LoginDto): Promise<AccessTokenType> {
-        const {email, password} = loginDto;
-
-        const user = await this.userRepository.findOne({ where: { email } });
-
-        if (!user) throw new BadRequestException('Invalid email or password');
-
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-
-        if (!isPasswordValid) throw new BadRequestException('Invalid email or password');
-
-        const accessToken = await this.generateJWT(user);
-        
-        return { accessToken };
+       return this.authService.login(loginDto);
     }
 
     /**
@@ -105,7 +76,7 @@ export class UsersService{
         user.username = username ?? user.username;
 
         if (password) {
-            user.password = await this.hashPassword(password);
+            user.password = await this.authService.hashPassword(password);
         }
 
 
@@ -126,25 +97,4 @@ export class UsersService{
         }
         throw new ForbiddenException('Access denied, You are not authorized to delete this user');
     }
-
-    /**
-     * Generate JWT
-     * @param user user to generate JWT for
-     * @returns JWT (access token)
-     */
-    private async generateJWT(user: User): Promise<string>{
-        const payload:JWTPayloadType = { id: user.id, userType: user.userType};
-        return this.jwtService.signAsync(payload);
-    }
-
-    /**
-     * Hash password
-     * @param password password to hash
-     * @returns hashed password
-     */
-    private async hashPassword(password: string): Promise<string>{
-        const salt = await bcrypt.genSalt(10);
-        return bcrypt.hash(password, salt);
-    }
-    
 }
