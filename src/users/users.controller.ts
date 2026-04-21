@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Headers, UseGuards, Req, Put, Delete, Param, ParseIntPipe, UseInterceptors, ClassSerializerInterceptor } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Headers, UseGuards, Req, Put, Delete, Param, ParseIntPipe } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { RegisterDto } from "./dtos/register.dto";
 import { LoginDto } from "./dtos/login.dto";
@@ -9,7 +9,6 @@ import { Role } from "./decorators/user-role.decorator";
 import { UserTypeEnum } from "src/utils/enums";
 import { AuthRolesGuard } from "./guards/auth-roles.guard";
 import { UpdateUserDto } from "./dtos/update-user.dto";
-import { LoggerInterceptor } from "src/utils/interceptors/logger.interceptor";
 
 
 @Controller('/api/users')
@@ -33,7 +32,6 @@ export class UsersController {
     // GET ~/api/users/current-user
     @Get('current-user')
     @UseGuards(AuthGuard)
-    @UseInterceptors(ClassSerializerInterceptor)
     public getCurrentUser(@currentUserDecorator() payload:JWTPayloadType){
         return this.UsersService.getCurrentUser(payload.id);
     }
@@ -42,7 +40,6 @@ export class UsersController {
     @Get()
     @Role(UserTypeEnum.ADMIN)
     @UseGuards(AuthRolesGuard)
-    @UseInterceptors(ClassSerializerInterceptor)
     public getAll(){
         return this.UsersService.getAll();
     }
