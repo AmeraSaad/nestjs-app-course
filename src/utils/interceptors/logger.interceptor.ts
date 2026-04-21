@@ -1,13 +1,14 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
-import { Observable, tap} from "rxjs";
+import { Observable, tap, map} from "rxjs";
 
 @Injectable()
 export class LoggerInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
         console.log('Before Route Handler...');
         
-        return next.handle().pipe(tap(() => {
-            console.log('After Route Handler...');
+        return next.handle().pipe(map((data) => {
+            const {password, ...rest} = data;
+            return rest;
         }));
     }
     
