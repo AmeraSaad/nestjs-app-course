@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Headers, UseGuards, Req } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Headers, UseGuards, Req, Put, Delete, Param, ParseIntPipe } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { RegisterDto } from "./dtos/register.dto";
 import { LoginDto } from "./dtos/login.dto";
@@ -8,6 +8,7 @@ import type { JWTPayloadType } from "src/utils/types";
 import { Role } from "./decorators/user-role.decorator";
 import { UserTypeEnum } from "src/utils/enums";
 import { AuthRolesGuard } from "./guards/auth-roles.guard";
+import { UpdateUserDto } from "./dtos/update-user.dto";
 
 
 @Controller('/api/users')
@@ -44,5 +45,20 @@ export class UsersController {
         return this.UsersService.getAll();
     }
 
+    // Put ~/api/users
+    @Put()
+    @Role(UserTypeEnum.USER, UserTypeEnum.ADMIN)
+    @UseGuards(AuthRolesGuard)
+    public updateUser(@currentUserDecorator() payload:JWTPayloadType, @Body() body: UpdateUserDto){
+        return this.UsersService.update(payload.id, body);
+    }
+
+    // Delete ~/api/users
+    @Delete(":id")
+    @Role(UserTypeEnum.USER, UserTypeEnum.ADMIN)
+    @UseGuards(AuthRolesGuard)
+    public deleteUser(@Param("id", ParseIntPipe) id:number, @currentUserDecorator() payload:JWTPayloadType){
+        return this.UsersService.delete(id,payload);
+    }
 
 }
