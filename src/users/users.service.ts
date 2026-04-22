@@ -11,7 +11,7 @@ import { promises } from "dns";
 import { ConfigService } from "@nestjs/config";
 import { UpdateUserDto } from "./dtos/update-user.dto";
 import { UserTypeEnum } from "src/utils/enums";
-import { AuthService } from "./auth.service";
+import { AuthProvider } from "./auth.provider";
 
 @Injectable()
 export class UsersService{
@@ -19,7 +19,7 @@ export class UsersService{
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-        private readonly authService: AuthService
+        private readonly authProvider: AuthProvider
     ){}
 
       /**
@@ -28,7 +28,7 @@ export class UsersService{
      * @returns JWT (access token)
      */
     public async register(registerDto: RegisterDto): Promise<AccessTokenType> {
-        return this.authService.register(registerDto);
+        return this.authProvider.register(registerDto);
     }
 
     /**
@@ -37,7 +37,7 @@ export class UsersService{
      * @returns JWT (access token)
      */
     public async login(loginDto: LoginDto): Promise<AccessTokenType> {
-       return this.authService.login(loginDto);
+       return this.authProvider.login(loginDto);
     }
 
     /**
@@ -76,7 +76,7 @@ export class UsersService{
         user.username = username ?? user.username;
 
         if (password) {
-            user.password = await this.authService.hashPassword(password);
+            user.password = await this.authProvider.hashPassword(password);
         }
 
 

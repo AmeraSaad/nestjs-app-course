@@ -6,11 +6,11 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { StringValue } from "ms";
-import { AuthService } from "./auth.service";
+import { AuthProvider } from "./auth.provider";
 
 @Module({
     controllers: [UsersController],
-    providers:[UsersService, AuthService],
+    providers:[UsersService, AuthProvider],
     imports: [
         TypeOrmModule.forFeature([User]),
         JwtModule.registerAsync({
