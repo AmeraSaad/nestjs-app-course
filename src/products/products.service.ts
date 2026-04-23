@@ -43,14 +43,14 @@ export class ProductService {
      * @returns all products with their associated user and reviews
      */
     public getAll(){
-        return this.productRepository.find({relations:{user:true, reviews:true}});
+        return this.productRepository.find();
     }
 
     /**
      * Get a single product by ID
      */
     public async getOneBy(id: number){
-        const product = await this.productRepository.findOne({ where: { id }, relations: { user: true, reviews: true } });
+        const product = await this.productRepository.findOne({ where: { id } });
 
         if(!product) throw new NotFoundException("Product with this id is not found");
         return product;
