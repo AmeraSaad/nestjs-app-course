@@ -7,6 +7,7 @@ import { Controller,
     Delete,
     ParseIntPipe,
     UseGuards,
+    Query,
 } from "@nestjs/common";
 
 import { createProductDto } from "./dtos/create-product.dto";
@@ -18,6 +19,7 @@ import { UserTypeEnum } from "src/utils/enums";
 import { AuthRolesGuard } from "src/users/guards/auth-roles.guard";
 import { currentUserDecorator } from "src/users/decorators/current-user.decorator";
 import type { JWTPayloadType } from "src/utils/types";
+import { title } from "process";
 
 
 @Controller('api/products')
@@ -35,8 +37,12 @@ export class ProductController{
 
     // GET: ~/api/products
     @Get()
-    public getAllProducts(){
-        return this.productService.getAll();
+    public getAllProducts(
+        @Query('title') title:string,
+        @Query('minPrice') minPrice:number,
+        @Query('maxPrice') maxPrice:number,
+    ){
+        return this.productService.getAll(title,minPrice,maxPrice);
     }
 
     // GET: ~/api/products/:id
