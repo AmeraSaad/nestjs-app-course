@@ -47,12 +47,16 @@ export class ProductController{
 
     // PUT: ~/api/products/:id
     @Put(':id')
+    @UseGuards(AuthRolesGuard)
+    @Roles(UserTypeEnum.ADMIN)
     public updateProduct( @Param("id",ParseIntPipe) id: number,  @Body() body:UpdateProductDto){
         return this.productService.update(id, body);
     }
 
     // DELETE: ~/api/products/:id
     @Delete(':id')
+    @UseGuards(AuthRolesGuard)
+    @Roles(UserTypeEnum.ADMIN)
     public deleteProduct(@Param("id",ParseIntPipe) id: number){
         return this.productService.delete(id);
     }

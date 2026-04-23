@@ -48,6 +48,8 @@ export class ProductService {
 
     /**
      * Get a single product by ID
+     * @param id ID of the product to retrieve
+     * @returns the product with the specified ID
      */
     public async getOneBy(id: number){
         const product = await this.productRepository.findOne({ where: { id } });
@@ -58,6 +60,9 @@ export class ProductService {
 
     /**
      * Update a product by ID
+     * @param id ID of the product to update
+     * @param updateProductDto data for updating the product
+     * @returns the updated product
      */
     public async update(id: number, updateProductDto:UpdateProductDto){
         const product = await this.getOneBy(id);
@@ -74,6 +79,8 @@ export class ProductService {
 
     /**
      * Delete a product by ID
+     * @param id ID of the product to delete
+     * @returns success message
      */
     public async delete(id: number){
         const product = await this.getOneBy(id);
