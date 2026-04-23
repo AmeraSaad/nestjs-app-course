@@ -43,10 +43,10 @@ export class ProductService {
      * @returns all products with their associated user and reviews
      */
     public getAll(title?: string, minPrice?: number, maxPrice?: number){
-        const filter ={
-            ...(title? {title: Like(`%${title.toLowerCase()}%`)}:{}),
-            ...(minPrice && maxPrice? {price: Between(minPrice, maxPrice)}:{}),
-        }
+          const filter = {
+            ...(title? { title: Like(`%${title.toLowerCase()}%`) } : {}),
+            ...(minPrice !== undefined && maxPrice !== undefined ? { price: Between(minPrice, maxPrice) }: {}),
+        };
         return this.productRepository.find({ where: filter });
     }
 
