@@ -5,11 +5,12 @@ import { UserModule } from 'src/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './product.entity';
 import { Review } from 'src/reviews/review.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
     controllers: [ProductController],
     providers: [ProductService],
-    imports: [TypeOrmModule.forFeature([Product])]
+    imports: [TypeOrmModule.forFeature([Product]),UserModule, JwtModule]
 })
 export class ProductsModule {
 

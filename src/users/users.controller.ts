@@ -5,7 +5,7 @@ import { LoginDto } from "./dtos/login.dto";
 import { AuthGuard } from "./guards/auth.guard";
 import { currentUserDecorator } from "./decorators/current-user.decorator";
 import type { JWTPayloadType } from "src/utils/types";
-import { Role } from "./decorators/user-role.decorator";
+import { Roles } from "./decorators/user-role.decorator";
 import { UserTypeEnum } from "src/utils/enums";
 import { AuthRolesGuard } from "./guards/auth-roles.guard";
 import { UpdateUserDto } from "./dtos/update-user.dto";
@@ -40,7 +40,7 @@ export class UsersController {
 
     // GET ~/api/users/all
     @Get()
-    @Role(UserTypeEnum.ADMIN)
+    @Roles(UserTypeEnum.ADMIN)
     @UseGuards(AuthRolesGuard)
     public getAll(){
         return this.usersService.getAll();
@@ -48,7 +48,7 @@ export class UsersController {
 
     // Put ~/api/users
     @Put()
-    @Role(UserTypeEnum.USER, UserTypeEnum.ADMIN)
+    @Roles(UserTypeEnum.USER, UserTypeEnum.ADMIN)
     @UseGuards(AuthRolesGuard)
     public updateUser(@currentUserDecorator() payload:JWTPayloadType, @Body() body: UpdateUserDto){
         return this.usersService.update(payload.id, body);
@@ -56,7 +56,7 @@ export class UsersController {
 
     // Delete ~/api/users
     @Delete(":id")
-    @Role(UserTypeEnum.USER, UserTypeEnum.ADMIN)
+    @Roles(UserTypeEnum.USER, UserTypeEnum.ADMIN)
     @UseGuards(AuthRolesGuard)
     public deleteUser(@Param("id", ParseIntPipe) id:number, @currentUserDecorator() payload:JWTPayloadType){
         return this.usersService.delete(id,payload);

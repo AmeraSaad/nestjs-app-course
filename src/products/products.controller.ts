@@ -6,11 +6,18 @@ import { Controller,
     Put, 
     Delete,
     ParseIntPipe,
+    UseGuards,
 } from "@nestjs/common";
 
 import { createProductDto } from "./dtos/create-product.dto";
 import { UpdateProductDto } from "./dtos/update-product.dto";
 import { ProductService } from "./products.service";
+import { AuthGuard } from "src/users/guards/auth.guard";
+import { Roles } from "src/users/decorators/user-role.decorator";
+import { UserTypeEnum } from "src/utils/enums";
+import { AuthRolesGuard } from "src/users/guards/auth-roles.guard";
+import { currentUserDecorator } from "src/users/decorators/current-user.decorator";
+import type { JWTPayloadType } from "src/utils/types";
 
 
 @Controller('api/products')
@@ -20,8 +27,10 @@ export class ProductController{
 
     // POST: ~/api/products
     @Post()
-    public CreateNewProduct(@Body() body:createProductDto){
-        return this.productService.CreateProduct(body);
+    @UseGuards(AuthRolesGuard)
+    @Roles(UserTypeEnum.ADMIN)
+    public CreateNewProduct(@Body() body:createProductDto, @currentUserDecorator() payload:JWTPayloadType){
+        return this.productService.CreateProduct(body, payload.id);
     }
 
     // GET: ~/api/products

@@ -17,30 +17,40 @@ export class ProductService {
 
     constructor(
         @InjectRepository(Product) 
-        private readonly productRepository: Repository<Product>
+        private readonly productRepository: Repository<Product>,
+        private readonly usersService: UsersService
     ){}
     
     /**
      * Create a new product
+     * @param dto data for creating a new product
+     * @param userId ID of the logged-in user
+     * @returns the created product
      */
-    public async CreateProduct(createProductdto:createProductDto){
-        const product = this. productRepository.create(createProductdto);
+    public async CreateProduct(dto:createProductDto, userId: number){
+        const user = await this.usersService.getCurrentUser(userId);
+        const product = this. productRepository.create({
+            ...dto,
+            title: dto.title.toLowerCase(),
+            user
+        });
         await this.productRepository.save(product);
         return product;
     }
 
     /**
      * Get all products
+     * @returns all products with their associated user and reviews
      */
     public getAll(){
-        return this.productRepository.find();
+        return this.productRepository.find({relations:{user:true, reviews:true}});
     }
 
     /**
      * Get a single product by ID
      */
     public async getOneBy(id: number){
-        const product = await this.productRepository.findOne({ where: { id } });
+        const product = await this.productRepository.findOne({ where: { id }, relations: { user: true, reviews: true } });
 
         if(!product) throw new NotFoundException("Product with this id is not found");
         return product;
